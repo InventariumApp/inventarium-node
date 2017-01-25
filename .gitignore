@@ -2,6 +2,7 @@ config.js
 node_modules
 npm-debug.log
 .DS_Store
+my_commands.txt
 
 # Logs
 logs
