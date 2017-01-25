@@ -22,7 +22,7 @@ app.get('/michael', function(req, res){
   res.send('Attempting to send message.');
   console.log('Received a request!');
   twilio.sendSms(phoneNumbers.michaelPhoneNumber, 'Hello there, from Node Server_2!');
-  var response = chatbot.sendToChatbot('I just threw away the milk', '<33>', phoneNumbers.michaelPhoneNumber);
+  //var response = chatbot.sendToChatbot('I just threw away the milk', '<33>', phoneNumbers.michaelPhoneNumber);
 });
 
 app.get('/user', function(req, res){
@@ -34,11 +34,13 @@ app.post('/twilio', function(req, res){
   console.log("Received a Message From User");
   console.log(req.body);
   message_body = req.body.Body;
-  var twilio = require('twilio');
-  var twiml = new twilio.TwimlResponse();
-  twiml.message(message_body);
-  res.writeHead(200, {'Content-Type': 'text/xml'});
-  res.end(twiml.toString());
+  chatbot.sendToChatbot(message_body, '<33>', phoneNumbers.michaelPhoneNumber, function(result) {
+    var twilio = require('twilio');
+    var twiml = new twilio.TwimlResponse();
+    twiml.message(result);
+    res.writeHead(200, {'Content-Type': 'text/xml'});
+    res.end(twiml.toString());
+  });
 });
 
 app.listen(3000, function(){

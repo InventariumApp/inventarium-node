@@ -1,7 +1,7 @@
 var config = require('./config');
 var twilio = require('./twilioClient');
 
-module.exports.sendToChatbot = function(message, sessionId, phoneNumber) {
+module.exports.sendToChatbot = function(message, sessionId, phoneNumber, callback) {
     var apiai = require("apiai");
     var response;
 
@@ -15,7 +15,8 @@ module.exports.sendToChatbot = function(message, sessionId, phoneNumber) {
 
     request.on('response', function(response) {
         response = parseResponse(response);
-        twilio.sendSms(phoneNumber, response);
+        callback(response);
+        //twilio.sendSms(phoneNumber, response);
     });
 
     request.on('error', function(error) {
