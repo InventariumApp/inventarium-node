@@ -13,14 +13,14 @@ app.use(twilioNotifications.notifyOnError);
 app.get('/israel', function(req, res){
   res.send('Attempting to send message.');
   console.log('Received a request!');
-  twilio.sendSms(phoneNumbers.israelPhoneNumber, 'Hello there, from Node Server!');
-  var response = chatbot.sendToChatbot('I just threw away the milk', '<33>', phoneNumbers.israelPhoneNumber);
+  twilio.sendSms(phoneNumbers.israelPhoneNumber, 'Hello there, from Node Server_1!');
+  // var response = chatbot.sendToChatbot('I just threw away the milk', '<33>', phoneNumbers.israelPhoneNumber);
 });
 
 app.get('/michael', function(req, res){
   res.send('Attempting to send message.');
   console.log('Received a request!');
-  twilio.sendSms(phoneNumbers.michaelPhoneNumber, 'Hello there, from Node Server!');
+  twilio.sendSms(phoneNumbers.michaelPhoneNumber, 'Hello there, from Node Server_2!');
   var response = chatbot.sendToChatbot('I just threw away the milk', '<33>', phoneNumbers.michaelPhoneNumber);
 });
 
