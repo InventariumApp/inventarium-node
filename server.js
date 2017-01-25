@@ -4,11 +4,12 @@ var phoneNumbers = require('./phone_numbers');
 var twilioNotifications = require('./twilio_notifications');
 var twilio = require('./twilioClient');
 var chatbot = require('./apiaiClient');
-
+var bodyParser = require('body-parser');
 
 var app = express();
 
 app.use(twilioNotifications.notifyOnError);
+app.use(bodyParser.urlencoded({extended: false}));
 
 app.get('/israel', function(req, res){
   res.send('Attempting to send message.');
@@ -30,9 +31,12 @@ app.get('/user', function(req, res){
 });
 
 app.post('/twilio', function(req, res){
+  console.log("Received a Message From User");
+  console.log(req.body);
+  message_body = req.body.Body;
   var twilio = require('twilio');
   var twiml = new twilio.TwimlResponse();
-  twiml.message('Hi there!');
+  twiml.message(message_body);
   res.writeHead(200, {'Content-Type': 'text/xml'});
   res.end(twiml.toString());
 });
