@@ -18,6 +18,14 @@ app.get('/user', function(req, res){
   console.log(req.query);
 });
 
+app.post('/twilio', function(req, res){
+  var twilio = require('twilio');
+  var twiml = new twilio.TwimlResponse();
+  twiml.message('Hi there!');
+  res.writeHead(200, {'Content-Type': 'text/xml'});
+  res.end(twiml.toString());
+});
+
 app.listen(3000, function(){
   console.log('App listening on port 3000!');
 });
