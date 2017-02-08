@@ -30,6 +30,7 @@ module.exports.sendToChatbot = function(message, sessionId, phoneNumber, callbac
 
 // Parse the response
 // TODO: Check for item is nil etc.
+// TODO: Pull out database interaction into another method
 parseResponse = function(response, phoneNumber) {
     var response_result = response.result;
     var response_speech = response_result.fulfillment.speech;
