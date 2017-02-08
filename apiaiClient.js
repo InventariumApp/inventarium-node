@@ -11,12 +11,13 @@ module.exports.sendToChatbot = function(message, sessionId, phoneNumber, callbac
         sessionId: sessionId
     }
 
+    // Send message to API.AI and get response
     var request = app.textRequest(message, options);
 
+    // On response, parse it and return it with callback
     request.on('response', function(response) {
         response = parseResponse(response);
         callback(response);
-        //twilio.sendSms(phoneNumber, response);
     });
 
     request.on('error', function(error) {
@@ -26,7 +27,16 @@ module.exports.sendToChatbot = function(message, sessionId, phoneNumber, callbac
     request.end();
 };
 
+// Parse the response
+// TODO: Check for item is nil etc.
 parseResponse = function(response) {
-  var speech = response.result.fulfillment.speech;
-  return speech;
+    var result = response.result;
+    var speech = result.fulfillment.speech;
+    var items = result.parameters.item
+    var number = result.parameters.number
+    console.log(response)
+    console.log(items)
+    console.log(number)
+    //console.log("response ***")
+    return speech;
 };
