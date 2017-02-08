@@ -34,7 +34,8 @@ app.post('/twilio', function(req, res){
   console.log("Received a Message From User");
   console.log(req.body);
   message_body = req.body.Body;
-  chatbot.sendToChatbot(message_body, '<33>', phoneNumbers.michaelPhoneNumber, function(result) {
+  message_sender_phone_number = req.body.From
+  chatbot.sendToChatbot(message_body, '<33>', message_sender_phone_number, function(result) {
     var twilio = require('twilio');
     var twiml = new twilio.TwimlResponse();
     twiml.message(result);

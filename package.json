@@ -12,6 +12,7 @@
     "apiai": "^3.0.3",
     "body-parser": "^1.16.0",
     "express": "^4.14.0",
+    "firebase-admin": "^4.1.0",
     "twilio": "^2.11.1"
   }
 }
