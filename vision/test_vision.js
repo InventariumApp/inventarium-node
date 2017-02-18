@@ -1,4 +1,3 @@
-console.log("Hello")
 // Imports the Google Cloud client library
 const Vision = require('@google-cloud/vision');
 
@@ -9,14 +8,12 @@ const vision = Vision();
 const fileName = '/root/inventarium-node/images/cheerios.jpg';
 
 // Performs label detection on the local file
-vision.detectLabels(fileName)
+vision.detectLogos(fileName)
   .then((results) => {
   console.log(results)
-  const labels = results[0];
+  const logos = results[0];
 
     console.log('Labels:');
-    labels.forEach((label) => console.log(label));
+    logos.forEach((label) => console.log(label));
   });
 
-
-console.log("im after ")
