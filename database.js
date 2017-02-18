@@ -2,7 +2,7 @@
 //TODO:  add user to the .indexOn in your security rules.
 var admin = require("firebase-admin");
 // Fetch the service account key JSON file contents
-var serviceAccount = require("./serviceAccountKey.json");
+var serviceAccount = require("/root/firebase_account_key.json");
 // Initialize the app with a service account, granting admin privileges
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
