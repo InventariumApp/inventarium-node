@@ -4,6 +4,7 @@ node_modules
 npm-debug.log
 .DS_Store
 my_commands.txt
+mysql_config.json
 
 # Logs
 logs
