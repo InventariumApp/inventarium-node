@@ -1,3 +1,5 @@
+var mysql = require('mysql');
+
 function getProductName(req, res, pool) {
     pool.getConnection(function(err, connection) {
         if (err) {
@@ -14,7 +16,11 @@ function getProductName(req, res, pool) {
             return;
         }
         else {
-            connection.query("select gtin_nm from gtin where gtin_cd =" + " " + barcode, function(err, data){
+            var sql = "select gtin.gtin_nm, brand.brand_nm from gtin inner join brand " +
+                "where gtin.gtin_cd = ? and gtin.bsin = brand.bsin"
+            var inserts = [barcode];
+            sql = mysql.format(sql, inserts);
+            connection.query(sql, function(err, data){
                 if(!err) {
                     console.log("Data: " + data);
                     if(data.length > 0) {
