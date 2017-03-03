@@ -19,7 +19,7 @@ function getProductName(req, res, pool) {
                     console.log("Data: " + data);
                     if(data.length > 0) {
                         console.log("Here:" + data[0]);
-                        res.json(data[0]['gtin_nm']);
+                        res.json(data[0]);
                         connection.release();
                     }
                     else {
