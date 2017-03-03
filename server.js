@@ -6,6 +6,16 @@ var twilioNotifications = require('./twilio_notifications');
 var twilio = require('./twilioClient');
 // var chatbot = require('./apiaiClient');
 var bodyParser = require('body-parser');
+var mysql = require('mysql');
+var connection = mysql.createConnection(require('./mysql_config'));
+
+connection.connect(function(err) {
+    if (err) {
+        console.log("An error occurred!");
+        console.log(err)
+        return;
+    }
+});
 
 var app = express();
 
@@ -32,7 +42,7 @@ app.get('/user', function (req, res) {
 });
 
 app.get('/product_name', function (req, res) {
-    barcodeDb.getProductName(req, res);
+    barcodeDb.getProductName(req, res, connection);
 });
 
 // app.post('/twilio', function (req, res) {
