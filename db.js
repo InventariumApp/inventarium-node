@@ -1,7 +1,4 @@
-var mysql = require('mysql');
-var pool = mysql.createPool(require('./mysql_config'));
-
-function getProductName(req, res) {
+function getProductName(req, res, pool) {
     pool.getConnection(function(err, connection) {
         if (err) {
             console.log("An error occurred!");
@@ -34,8 +31,6 @@ function getProductName(req, res) {
     });
 }
 
-// getProductName('0008817013220');
-
-// module.exports = {
-// 	getProductName: getProductName,
-// }
+module.exports = {
+	getProductName: getProductName,
+}
