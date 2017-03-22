@@ -1,8 +1,4 @@
-var fs = require('fs');
-var path = require('path');
-//var uid = require('uid2');
-var mime = require('mime');
-
+var vision = require('./vision/vision.js');
 var express = require('express');
 var config = require('./config');
 var phoneNumbers = require('./phone_numbers');
@@ -43,16 +39,12 @@ app.get('/product_name', function (req, res) {
     barcodeDb.getProductName(req, res, pool, mysql);
 });
 
-app.post('/image', function(req, res) {
-    console.log("received image")
-     var tempPath = req.files.file.path;
-    console.log("path ", tempPath);
-    //get the mime type of the file
-    var type = mime.lookup(req.files.file.path);
-    //get the extension of the file
-    var extension = req.files.file.path.split(/[. ]+/).pop();
-    console.log("extension type: ", extension);
-    res.send("Got image");
+app.get('/image_data', function(req, res) {
+    console.log("received image");
+    //var data = vision.getImageData();
+    var imagePath = req.params.image_path;
+    // var data = vision.getImageData(imagePath);
+    //res.json(data);
 });
 
 // app.post('/twilio', function (req, res) {
