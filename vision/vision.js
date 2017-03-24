@@ -22,5 +22,13 @@ exports.getImageData = function(fileName, res) {
             res.json({'product_name': logos[0]});
     	    logos.forEach((logo) => console.log(logo));
       });
+
+    vision.detectText(storage.bucket(bucketName).file(fileName))
+  	.then((results) => {
+    	const detections = results[0];
+
+    	console.log('Text:');
+    	detections.forEach((text) => console.log(text));
+  });
 }
 
