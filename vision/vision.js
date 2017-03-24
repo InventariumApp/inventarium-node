@@ -27,8 +27,17 @@ exports.getImageData = function(fileName, res) {
   	.then((results) => {
     	const detections = results[0];
 
-    	console.log('Text:');
+    	console.log('************ Text ****************');
     	detections.forEach((text) => console.log(text));
+  });
+
+    // Performs label detection on the remote file
+    vision.detectLabels(storage.bucket(bucketName).file(fileName))
+  	.then((results) => {
+    	const labels = results[0];
+
+    	console.log('******** Labels **********');
+    	labels.forEach((label) => console.log(label));
   });
 }
 
