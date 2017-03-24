@@ -17,10 +17,10 @@ exports.getImageData = function(fileName, res) {
      //vision.detectLogos('/root/inventarium-node/images/cheerios.jpg')
     	.then((results) => {
     	    const logos = results[0];
-    	    console.log('Logos:');
+    	    console.log('Results:');
+            console.log(results);
             res.json({'product_name': logos[0]});
     	    logos.forEach((logo) => console.log(logo));
       });
-    return data;
 }
 
