@@ -9,6 +9,7 @@
   "author": "Israel Hill",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/storage": "^0.8.0",
     "@google-cloud/vision": "^0.8.0",
     "apiai": "^3.0.3",
     "body-parser": "^1.16.0",

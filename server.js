@@ -15,9 +15,10 @@ var app = express();
 app.use(twilioNotifications.notifyOnError);
 app.use(bodyParser.urlencoded({extended: false}));
 
-app.get('/israel', function (req, res) {
+app.get('/israel/:test', function (req, res) {
     res.send('Attempting to send message.');
     console.log('Received a request!');
+    console.log(req.params.test);
     twilio.sendSms(phoneNumbers.israelPhoneNumber, 'Hello there, from Node Server_1!');
     // var response = chatbot.sendToChatbot('I just threw away the milk', '<33>', phoneNumbers.israelPhoneNumber);
 });
@@ -39,12 +40,11 @@ app.get('/product_name', function (req, res) {
     barcodeDb.getProductName(req, res, pool, mysql);
 });
 
-app.get('/image_data', function(req, res) {
+app.get('/image_data/:filename', function(req, res) {
     console.log("received image");
-    //var data = vision.getImageData();
-    var imagePath = req.params.image_path;
-    // var data = vision.getImageData(imagePath);
-    //res.json(data);
+    const fileName = decodeURIComponent(req.params.filename);
+    console.log(fileName);
+    vision.getImageData(fileName, res);
 });
 
 // app.post('/twilio', function (req, res) {
@@ -62,5 +62,5 @@ app.get('/image_data', function(req, res) {
 // });
 
 app.listen(3000, function () {
-    console.log('App listening on port 3000!');
+    console.log('App Started!');
 });
