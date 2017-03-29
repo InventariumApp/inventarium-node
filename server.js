@@ -9,6 +9,7 @@ var bodyParser = require('body-parser');
 var mysql = require('mysql');
 var pool = mysql.createPool(require('./mysql_config'));
 var barcodeDb = require('./db');
+var awsUpc = require('./aws_upc.js');
 
 var app = express();
 
@@ -37,7 +38,8 @@ app.get('/user', function (req, res) {
 
 app.get('/product_name', function (req, res) {
     console.log("Received barcode request.");
-    barcodeDb.getProductName(req, res, pool, mysql);
+    //barcodeDb.getProductName(req, res, pool, mysql);
+    awsUpc.getProductName(res, req.query['barcode']);
 });
 
 app.get('/image_data/:filename', function(req, res) {
