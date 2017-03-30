@@ -15,7 +15,7 @@ var app = express();
 
 app.use(twilioNotifications.notifyOnError);
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(express.static('static'));
+app.use(express.static(__dirname + '/static'));
 
 app.get('/israel/:test', function (req, res) {
     res.send('Attempting to send message.');
