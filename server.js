@@ -50,6 +50,17 @@ app.get('/image_data/:filename', function(req, res) {
     vision.getImageData(fileName, res);
 });
 
+app.post('/share_list', function(req, res) {
+   console.log("Request to share list");
+   var userEmail = req.body.user_email;
+   var recipientPhoneNumber = req.body.recipient_phone_number;
+   console.log('User Email: ', userEmail);
+   console.log('Recipeient Phone Numnber: ', recipientPhoneNumber);
+   res.sendStatus(200);
+});
+
+
+
 // app.post('/twilio', function (req, res) {
 //     console.log("Received a Message From User");
 //     console.log(req.body);
