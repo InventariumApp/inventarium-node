@@ -10,6 +10,7 @@ var mysql = require('mysql');
 var pool = mysql.createPool(require('./mysql_config'));
 var barcodeDb = require('./db');
 var awsUpc = require('./aws_upc.js');
+var firebase = require('./firebase.js');
 
 var app = express();
 

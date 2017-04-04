@@ -15,20 +15,31 @@ exports.getProductName = function(res, upc) {
             console.log("Error: ", err);
             res.json({'code': 200, 'status': 'No result for barcode: ' + upc});
         }
-        else if(typeof result['Items']['Request']['Errors'] != 'undefined') {
+        else if(typeof result['Items']['Request']['Errors'] !== 'undefined') {
             console.log('Error: ', result['Items']['Request']['Errors']['Error']['Message']);
+            res.json({'code': 200, 'status': 'No result for barcode: ' + upc});
+        }
+        else if(typeof result === 'undefined') {
+            console.log('No result for item');
             res.json({'code': 200, 'status': 'No result for barcode: ' + upc});
         }
         else {
             console.log(JSON.stringify(result));
-            console.log('\n\n\n');
-            //result['Items']['Item'].map(function(item) {
-            //    console.log(item);
-            //});
+            console.log('\n\n');
+
             console.log('Request UPC: ', upc);
-            var productObj = result['Items']['Item'][0];
+            console.log("Length: ", result['Items']['Item'].length);
+            // Item is an array if there are more than 1 result
+            // If there is only 1 result, Item is a JSON object
+            var productObj;
+            if(typeof result['Items']['Item'].length === 'undefined') {
+                productObj = result['Items']['Item'];
+            }
+            else {
+                productObj = result['Items']['Item'][0];
+            }
             console.log(productObj);
-            console.log('\n\n\n');
+            console.log('\n\n');
             var rawProductName = productObj['ItemAttributes']['Title'];
             var productName = cleanName(rawProductName);
             console.log('Product Name: ', productName);

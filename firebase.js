@@ -1,9 +1,9 @@
 var admin = require("firebase-admin");
-var serviceAccount = require("/root/firebase_server_key.json");
+var serviceAccount = require("./Firebase_server_key.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://inventarium-36e42.firebaseio.com/"
+  databaseURL: "https://nifty-acolyte-159120.firebaseio.com/"
 });
 
 var db = admin.database();
@@ -14,19 +14,22 @@ var listRef = db.ref("lists");
 // });
 
 exports.getPantryListForUser = function(userEmail) {
-    admin.database().ref('lists/' + 'iphoneaccount@gmail,com').once('value').then(function(snapshot) {
+    var data = [];
+    admin.database().ref('lists/' + userEmail).once('value').then(function(snapshot) {
         var pantryList = snapshot.val()['pantry-list'];
         var retVal = [];
         for(item in pantryList) {
             retVal.push(item);
         }
         console.log(retVal);
-        return retVal;
+        data = retVal;
     });
+    console.log(data);
+    return data;
 }
 
 exports.getShoppingListForUser = function(userEmail) {
-    admin.database().ref('lists/' + 'iphoneaccount@gmail,com').once('value').then(function(snapshot) {
+    admin.database().ref('lists/' + userEmail).once('value').then(function(snapshot) {
         var shoppingList = snapshot.val()['shopping-list'];
         var retVal = [];
         for(item in shoppingList) {
@@ -37,21 +40,19 @@ exports.getShoppingListForUser = function(userEmail) {
     });
 }
 
+// var data = [];
 // admin.database().ref('lists/' + 'iphoneaccount@gmail,com').once('value').then(function(snapshot) {
-//     var data = snapshot.val()['pantry-list'];
-//     console.log('Firebase data: \n\n');
-//     for(key in data) {
-//         console.log(key);
+//     var pantryList = snapshot.val()['pantry-list'];
+//     var retVal = [];
+//     for(item in pantryList) {
+//         retVal.push(item);
 //     }
+//     console.log(retVal);
+//     data = retVal;
 // });
 
-
-admin.database().ref('lists/' + 'iphoneaccount@gmail,com').once('value').then(function(snapshot) {
-    var shoppingList = snapshot.val()['shopping-list'];
-    var retVal = [];
-    for(key in shoppingList) {
-        retVal.push(key);
-    }
-    console.log(retVal);
-    return retVal;
+admin.database().ref('share-links/' + '11111111111').set({
+    'access-to': 'test@gmail,com'
 });
+
+
