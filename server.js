@@ -57,6 +57,9 @@ app.post('/share_list', function(req, res) {
    var recipientPhoneNumber = req.body.recipient_phone_number;
    console.log('User Email: ', userEmail);
    console.log('Recipeient Phone Numnber: ', recipientPhoneNumber);
+   // create a link between user and number
+   firebase.shareWithPhoneNumber(userEmail, recipientPhoneNumber);
+   var userShoppingList = firebase.shareShoppingList(userEmail, phoneNumbers.israelPhoneNumber, twilio.sendSms);
    res.sendStatus(200);
 });
 

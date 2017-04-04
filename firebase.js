@@ -28,15 +28,24 @@ exports.getPantryListForUser = function(userEmail) {
     return data;
 }
 
-exports.getShoppingListForUser = function(userEmail) {
+exports.shareShoppingList = function(userEmail, phoneNumber, callback) {
     admin.database().ref('lists/' + userEmail).once('value').then(function(snapshot) {
         var shoppingList = snapshot.val()['shopping-list'];
-        var retVal = [];
+        var shoppingListString = '';
         for(item in shoppingList) {
-            retVal.push(item);
+            console.log("Shopping item: ", item);
+            shoppingListString = shoppingListString.concat(item);
+            shoppingListString = shoppingListString.concat(", ");
         }
-        console.log(retVal);
-        return retVal;
+        shoppingListString = shoppingListString.substring(0, shoppingListString.length - 2);
+        console.log("Shopping list string: ", shoppingListString);
+        callback(phoneNumber, shoppingListString);
+    });
+}
+
+exports.shareWithPhoneNumber = function(userEmail, phoneNumber) {
+    admin.database().ref('share-links/' + phoneNumber).set({
+        "access-to": userEmail
     });
 }
 
@@ -54,5 +63,6 @@ exports.getShoppingListForUser = function(userEmail) {
 admin.database().ref('share-links/' + '11111111111').set({
     'access-to': 'test@gmail,com'
 });
+
 
 
