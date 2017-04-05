@@ -39,6 +39,7 @@ exports.shareShoppingList = function(userEmail, phoneNumber, callback) {
         }
         shoppingListString = shoppingListString.substring(0, shoppingListString.length - 2);
         console.log("Shopping list string: ", shoppingListString);
+        console.log(phoneNumber);
         callback(phoneNumber, shoppingListString);
     });
 }

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker build -t docker-whale . && docker run -it -p 8080:3000 docker-whale
+docker build -t cloud . && docker run -it -e GOOGLE_APPLICATION_CREDENTIALS -p 8080:3000 cloud

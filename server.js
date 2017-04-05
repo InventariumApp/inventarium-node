@@ -40,8 +40,8 @@ app.get('/user', function (req, res) {
 
 app.get('/product_name', function (req, res) {
     console.log("Received barcode request.");
-    //barcodeDb.getProductName(req, res, pool, mysql);
-    awsUpc.getProductName(res, req.query['barcode']);
+    //barcodeDb.getProductName(req, res, pool, mysql); // MySQL Barcode Database
+    awsUpc.getProductName(res, req.query['barcode']);  // AWS Barcode
 });
 
 app.get('/image_data/:filename', function(req, res) {

@@ -11,33 +11,19 @@ const storage = Storage();
 const bucketName = 'nifty-acolyte-159120.appspot.com';
 //const bucketName = 'inventarium-bucket';
 
-exports.getImageData = function(fileName, res) { 
-    console.log("Here!");
-     vision.detectLogos(storage.bucket(bucketName).file(fileName))
-     //vision.detectLogos('/root/inventarium-node/images/cheerios.jpg')
-    	.then((results) => {
-    	    const logos = results[0];
-    	    console.log('Results:');
-            console.log(results);
-            res.json({'product_name': logos[0]});
-    	    logos.forEach((logo) => console.log(logo));
-      });
-
-    vision.detectText(storage.bucket(bucketName).file(fileName))
-  	.then((results) => {
-    	const detections = results[0];
-
-    	console.log('************ Text ****************');
-    	detections.forEach((text) => console.log(text));
-  });
-
+exports.getImageData = function (fileName, res) {
     // Performs label detection on the remote file
     vision.detectLabels(storage.bucket(bucketName).file(fileName))
-  	.then((results) => {
-    	const labels = results[0];
-
-    	console.log('******** Labels **********');
-    	labels.forEach((label) => console.log(label));
-  });
+        .then((results) => {
+            const labels = results[0];
+            console.log('******** Labels **********');
+            labels.forEach((label) => console.log(label));
+            if(labels.length > 0) {
+                res.json({"product_name": labels[0]});
+            }
+            else {
+                res.sendStatus(200);
+            }
+    });
 }
 
