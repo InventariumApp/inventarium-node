@@ -16,12 +16,20 @@ var exphbs  = require('express-handlebars');
 var app = express();
 
 // Setting up handlebars
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.engine('handlebars', exphbs(
+    {
+        defaultLayout: 'main',
+        layoutsDir: __dirname + '/views/layouts/',
+        partialsDir: __dirname + '/views/partials/'
+    })
+);
 app.set('view engine', 'handlebars');
 
 app.use(twilioNotifications.notifyOnError);
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(express.static(__dirname + '/static'));
+
+
+
 
 app.get('/israel/:test', function (req, res) {
     res.send('Attempting to send message.');
@@ -69,8 +77,9 @@ app.post('/share_list', function(req, res) {
 });
 
 app.get('/graphs', function(req, res) {
+    console.log('Directory name: ', __dirname);
     console.log('I am here');
-    res.render('home', {title: 'This is just a test!'});
+    res.render('index', {chartData: JSON.stringify([1, 2, 3, 4, 5, 6])});
 });
 
 
