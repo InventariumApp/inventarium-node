@@ -12,7 +12,12 @@ var barcodeDb = require('./db');
 var awsUpc = require('./aws_upc.js');
 var firebase = require('./firebase.js');
 
+var exphbs  = require('express-handlebars');
 var app = express();
+
+// Setting up handlebars
+app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.set('view engine', 'handlebars');
 
 app.use(twilioNotifications.notifyOnError);
 app.use(bodyParser.urlencoded({extended: false}));
@@ -61,6 +66,11 @@ app.post('/share_list', function(req, res) {
    firebase.shareWithPhoneNumber(userEmail, recipientPhoneNumber);
    var userShoppingList = firebase.shareShoppingList(userEmail, recipientPhoneNumber, twilio.sendSms);
    res.sendStatus(200);
+});
+
+app.get('/graphs', function(req, res) {
+    console.log('I am here');
+    res.render('home', {title: 'This is just a test!'});
 });
 
 
