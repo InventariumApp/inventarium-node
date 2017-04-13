@@ -3,9 +3,9 @@ var context = $('#chart1');
     var myChart = new Chart(context, {
         type: 'bar',
         data: {
-            labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+            labels: {{{chartLabels}}},
             datasets: [{
-                label: '# of Votes',
+                label: 'Top 6 Purchased Products',
                 data: {{chartData}},
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
@@ -27,12 +27,23 @@ var context = $('#chart1');
             }]
         },
         options: {
+            title: {
+                fontSize: 40
+            },
             scales: {
                 yAxes: [{
                     ticks: {
-                        beginAtZero:true
+                        beginAtZero:true,
+                        fontSize: 20
+                    }
+                }],
+                xAxes: [{
+                    ticks: {
+                        fontSize: 20
                     }
                 }]
-            }
+            },
+            responsive: true,
+            maintainAspectRatio: true
         }
     });

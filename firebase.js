@@ -50,20 +50,30 @@ exports.shareWithPhoneNumber = function(userEmail, phoneNumber) {
     });
 }
 
-// var data = [];
-// admin.database().ref('lists/' + 'iphoneaccount@gmail,com').once('value').then(function(snapshot) {
-//     var pantryList = snapshot.val()['pantry-list'];
-//     var retVal = [];
-//     for(item in pantryList) {
-//         retVal.push(item);
-//     }
-//     console.log(retVal);
-//     data = retVal;
-// });
+exports.getTopProductsForUser = function(userEmail) {
+    return admin.database().ref('lists/' + userEmail + '/item-history').once('value').then(function(snapshot) {
+        var allItems = snapshot.val();
+        var itemCounts = {};
+        for(k in allItems) {
+            itemCounts[k] = getItemCount(allItems[k]);
+        }
 
-admin.database().ref('share-links/' + '11111111111').set({
-    'access-to': 'test@gmail,com'
-});
+        var sortableCounts = [];
+        for(item in itemCounts) {
+            sortableCounts.push([item, itemCounts[item]]);
+        }
+        sortableCounts.sort(function(a, b) {
+            return a[1] - b[1];
+        });
+        return sortableCounts;
+    });
+}
 
 
-
+function getItemCount(itemHistory) {
+    var count = 0;
+    for(k in itemHistory) {
+        count++;
+    }
+    return count;
+}

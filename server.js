@@ -76,10 +76,25 @@ app.post('/share_list', function(req, res) {
    res.sendStatus(200);
 });
 
-app.get('/graphs', function(req, res) {
-    console.log('Directory name: ', __dirname);
-    console.log('I am here');
-    res.render('index', {chartData: JSON.stringify([1, 2, 3, 4, 5, 6])});
+app.get('/graphs/top_products/:user', function(req, res) {
+    const userEmail = decodeURIComponent(req.params.user);
+    firebase.getTopProductsForUser(userEmail).then(function(results) {
+        var chartData = [];
+        var chartLabels = [];
+        var count = 0;
+        console.log(results);
+        for(i in results) {
+            console.log(results[i]);
+            chartLabels.push(results[i][0]);
+            chartData.push(results[i][1]);
+        }
+        // console.log("Inside here: ", chartData);
+        console.log('\n\n');
+        console.log(chartLabels);
+        res.render('index', {chartData: JSON.stringify(chartData),
+                             chartLabels: JSON.stringify(chartLabels)}
+        );
+    });
 });
 
 
