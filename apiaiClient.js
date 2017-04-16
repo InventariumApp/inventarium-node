@@ -1,10 +1,10 @@
 var config = require('./config');
 var twilio = require('./twilioClient');
 var phoneNumbers = require('./phone_numbers');
-var database = require('./database');
+var database = require('./firebase');
+var apiai = require("apiai");
 
-module.exports.sendToChatbot = function(message, sessionId, phoneNumber, callback) {
-    var apiai = require("apiai");
+exports.sendToChatbot = function(message, sessionId, phoneNumber, callback) {
     var response;
 
     var app = apiai(config.apiaiToken);

@@ -1,6 +1,7 @@
 var aws = require('aws-lib');
 var credentials = require('./amazon_credentials');
 var prodAdv = aws.createProdAdvClient(credentials['accessKey'], credentials['secretKey'], "inventarium39-20");
+var jQuery = require('jquery');
 
 
 
@@ -8,7 +9,7 @@ exports.getProductDataForBarcode = function(res, upc) {
     if(upc.length > 12) {
         upc = upc.substring(1, upc.length);
     }
-    var options = {SearchIndex: "Grocery", IdType: "UPC", ItemId: upc, ResponseGroup: "Images"};
+    var options = {SearchIndex: "Grocery", IdType: "UPC", ItemId: upc};
 
     prodAdv.call("ItemLookup", options, function(err, result) {
         if(err) {
@@ -24,9 +25,6 @@ exports.getProductDataForBarcode = function(res, upc) {
             res.json({'code': 200, 'status': 'No result for barcode: ' + upc});
         }
         else {
-            console.log(JSON.stringify(result));
-            console.log('\n\n');
-
             console.log('Request UPC: ', upc);
             console.log("Length: ", result['Items']['Item'].length);
             // Item is an array if there are more than 1 result
@@ -41,7 +39,8 @@ exports.getProductDataForBarcode = function(res, upc) {
                 productObj = result['Items']['Item'][0];
                 asin = productObj['ASIN'];
             }
-            // console.log(productObj);
+            console.log("Product Barcode JSON:");
+            console.log(productObj);
             // console.log('\n\n');
             var rawProductName = productObj['ItemAttributes']['Title'];
             var productName = cleanName(rawProductName);
@@ -60,9 +59,6 @@ exports.getProductDataForName = function(res, title) {
             console.log('No result for item');
         }
         else {
-            console.log(JSON.stringify(result));
-            console.log('\n\n');
-
             var productObj;
             var asin;
             if(typeof result['Items']['Item'].length === 'undefined') {
@@ -80,14 +76,6 @@ exports.getProductDataForName = function(res, title) {
             getPrice(asin, productName, res);
         }
     });
-}
-
-function cleanName(name) {
-    var cleanName = name.replace(/\./g, '');
-    if(cleanName.includes(',')) {
-        cleanName = cleanName.substring(0, cleanName.indexOf(','));
-    }
-    return cleanName;
 }
 
 
@@ -110,8 +98,7 @@ function getPrice(asin, cleanName, res) {
             res.json({'code': 200, 'status': 'No result for barcode: ' + upc});
         }
         else {
-            console.log(JSON.stringify(result));
-            console.log('\n\n');
+            console.log(result);
             var price = result['Items']['Item']['OfferSummary']["LowestNewPrice"]['FormattedPrice'];
             console.log(cleanName, "    Price: ", price);
             // pass data to getImageUrl to get data
@@ -130,7 +117,7 @@ function getPrice(asin, cleanName, res) {
  */
 function getImageUrl(asin, name, price, res) {
     var options = {IdType: "ASIN", ItemId: asin, ResponseGroup: "Images"}
-    prodAdv.call("ItemLookup", options, function(err, result) {
+    return prodAdv.call("ItemLookup", options, function(err, result) {
         if (err) {
             console.log("Error: ", err);
         }
@@ -140,14 +127,32 @@ function getImageUrl(asin, name, price, res) {
         else {
             console.log(JSON.stringify(result));
             console.log('\n\n');
-
-            var productObj = (typeof result['Items']['Item'].length === 'undefined')
-                ? result['Items']['Item'] : result['Items']['Item'][0]
-            var imageUrl = productObj["Items"]["Item"]["MediumImage"]["URL"];
+            var productObj;
+            if(typeof result['Items']['Item'].length === 'undefined') {
+                console.log("set item 1");
+                productObj = result['Items']['Item'];
+                asin = productObj['ASIN'];
+            }
+            else {
+                console.log("set item 2");
+                productObj = result['Items']['Item'][0];
+                asin = productObj['ASIN'];
+            }
+            var imageUrl = productObj["LargeImage"]["URL"];
             // respond with price, the name of the product, and the image url
-            res.json({"clean_nm": name, "price": price, "image_url": imageUrl});
+            console.log("Image URL: ", imageUrl);
+            // res.json({"clean_nm": name, "price": price, "image_url": imageUrl});
         }
     });
+}
+
+function cleanName(name) {
+    var cleanName = name.replace(/\./g, '');
+    cleanName = cleanName.replace(/\//g, ' ');
+    if(cleanName.includes(',')) {
+        cleanName = cleanName.substring(0, cleanName.indexOf(','));
+    }
+    return cleanName;
 }
 
 
@@ -169,7 +174,3 @@ function getImageUrl(asin, name, price, res) {
 //         console.log("Image URL: ", imageUrl);
 //     }
 // });
-
-
-
-
