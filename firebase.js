@@ -70,7 +70,6 @@ exports.getTopProductsForUser = function(userEmail) {
 }
 
 exports.addItemToShoppingList = function(userEmail, item, price, imageUrl) {
-    console.log(userEmail, item, price, imageUrl);
     return admin.database().ref('lists/' + userEmail + '/shopping-list/' + item).set({
         addedByUser: userEmail,
         count: 1,
@@ -80,19 +79,32 @@ exports.addItemToShoppingList = function(userEmail, item, price, imageUrl) {
     });
 }
 
-exports.removeItemFromShoppingList = function(userEmail, item) {
+exports.findShoppingListItemToRemove = function(userEmail, item) {
+    return admin.database().ref('lists/' + userEmail + '/shopping-list/').once('value').then(function(snapshot) {
+        var allItems = snapshot.val();
+        var targetItem = null;
+        for(currentItem in allItems) {
+            if(currentItem.toLowerCase().includes(item.toLowerCase())) {
+                targetItem = currentItem;
+                console.log("Item to delete: ", targetItem);
+                return targetItem;
+            }
+        }
+        return targetItem;
+    });
+}
 
+exports.removeItemFromShoppingList = function(userEmail, item) {
+    return admin.database().ref('lists/' + userEmail + '/shopping-list/').child(item).remove();
 }
 
 exports.getUserEmailForUserPhoneNumber = function(phoneNumber) {
     return admin.database().ref('lists/').once('value').then(function(snapshot) {
        var allUsers = snapshot.val();
        for(user in allUsers) {
-           console.log(typeof phoneNumber.toString(), typeof allUsers[user]['phone-number']);
            var currentPhoneNumber = allUsers[user]['phone-number'];
            if(typeof currentPhoneNumber !== 'undefined') {
                if(phoneNumber.toString() === currentPhoneNumber.toString()) {
-                   console.log("Phone numbers are equal", currentPhoneNumber);
                    return user;
                }
            }
@@ -109,3 +121,19 @@ function getItemCount(itemHistory) {
     }
     return count;
 }
+
+
+
+//admin.database().ref('lists/' + 'iphoneaccount@gmail,com' + '/shopping-list/').child('Jif Creamy Peanut Butter Twin Pack').remove();
+// admin.database().ref('lists/' + 'iphoneaccount@gmail,com' + '/shopping-list/').once('value').then(function(snapshot) {
+//     var allItems = snapshot.val();
+//     var targetItem = null;
+//     for(currentItem in allItems) {
+//         if(currentItem.toLowerCase().includes('crest')) {
+//             targetItem = currentItem;
+//             console.log(targetItem);
+//             return targetItem;
+//         }
+//     }
+//     return targetItem;
+// });

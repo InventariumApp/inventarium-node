@@ -30,18 +30,28 @@ function doAction(action, item, userEmail) {
     switch(action) {
         case 'removeItemFromShoppingList':
             removeItemFromShoppingList(item, userEmail);
+            break;
         case 'addItemToShoppingList':
             addItemToShoppingList(item, userEmail);
+            break;
         case 'addItemToPantryList':
+            break;
         case 'removeItemFromPantryList':
+            break;
         case 'getShoopingListItems':
+            break;
         default:
             break;
     }
 }
 
-function removeItemFromShoppingList() {
-
+function removeItemFromShoppingList(item, userEmail) {
+    console.log("Deleting ", item, " from list");
+    firebase.findShoppingListItemToRemove(userEmail, item).then(function(fullItemName) {
+        if(fullItemName !== null) {
+            firebase.removeItemFromShoppingList(userEmail, fullItemName);
+        }
+    });
 }
 
 function addItemToShoppingList(item, userEmail) {
