@@ -70,10 +70,11 @@ exports.getTopProductsForUser = function(userEmail) {
 }
 
 exports.addItemToShoppingList = function(userEmail, item, price, imageUrl) {
+    console.log(userEmail, item, price, imageUrl);
     return admin.database().ref('lists/' + userEmail + '/shopping-list/' + item).set({
         addedByUser: userEmail,
         count: 1,
-        imageUrl: imageUrl,
+        imageURL: imageUrl,
         name: item,
         price: price
     });
@@ -86,11 +87,14 @@ exports.removeItemFromShoppingList = function(userEmail, item) {
 exports.getUserEmailForUserPhoneNumber = function(phoneNumber) {
     return admin.database().ref('lists/').once('value').then(function(snapshot) {
        var allUsers = snapshot.val();
-       console.log(allUsers);
        for(user in allUsers) {
+           console.log(typeof phoneNumber.toString(), typeof allUsers[user]['phone-number']);
            var currentPhoneNumber = allUsers[user]['phone-number'];
-           if(typeof currentPhoneNumber !== 'undefined' && phoneNumber === currentPhoneNumber) {
-               return user;
+           if(typeof currentPhoneNumber !== 'undefined') {
+               if(phoneNumber.toString() === currentPhoneNumber.toString()) {
+                   console.log("Phone numbers are equal", currentPhoneNumber);
+                   return user;
+               }
            }
        }
        return null;
@@ -105,6 +109,3 @@ function getItemCount(itemHistory) {
     }
     return count;
 }
-
-// admin.database().ref('lists/').once('value').then(function(snapshot) {
-// });

@@ -3,8 +3,9 @@ var express = require('express');
 var config = require('./config');
 var phoneNumbers = require('./phone_numbers');
 var twilioNotifications = require('./twilio_notifications');
-var twilio = require('./twilioClient');
-// var chatbot = require('./apiaiClient');
+var twilio = require('twilio');
+var twilioClient = require('./twilioClient');
+var chatbot = require('./apiaiClient');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
 var pool = mysql.createPool(require('./mysql_config'));
@@ -35,14 +36,14 @@ app.get('/israel/:test', function (req, res) {
     res.send('Attempting to send message.');
     console.log('Received a request!');
     console.log(req.params.test);
-    twilio.sendSms(phoneNumbers.israelPhoneNumber, 'Hello there, from Node Server_1!');
+    twilioClient.sendSms(phoneNumbers.israelPhoneNumber, 'Hello there, from Node Server_1!');
     // var response = chatbot.sendToChatbot('I just threw away the milk', '<33>', phoneNumbers.israelPhoneNumber);
 });
 
 app.get('/michael', function (req, res) {
     res.send('Attempting to send message.');
     console.log('Received a request!');
-    twilio.sendSms(phoneNumbers.michaelPhoneNumber, 'Hello there, from Node Server_2!');
+    twilioClient.sendSms(phoneNumbers.michaelPhoneNumber, 'Hello there, from Node Server_2!');
     //var response = chatbot.sendToChatbot('I just threw away the milk', '<33>', phoneNumbers.michaelPhoneNumber);
 });
 
@@ -59,7 +60,7 @@ app.get('/product_data_for_barcode', function (req, res) {
 
 app.get('/product_data_for_name/:product_name', function(req, res) {
     console.log("Received product name request.");
-    aws.getProductDataForName(res, req.params.product_name);
+    aws.getProductDataForName(res, req.params.product_name, undefined, undefined);
 });
 
 app.get('/image_data/:filename', function(req, res) {
@@ -122,20 +123,17 @@ app.get('/graphs/', function(req, res) {
 });
 
 
-
-// app.post('/twilio', function (req, res) {
-//     console.log("Received a Message From User");
-//     console.log(req.body);
-//     message_body = req.body.Body;
-//     sender_phone_number = req.body.From
-//     chatbot.sendToChatbot(message_body, '<33>', sender_phone_number, function (result) {
-//         var twilio = require('twilio');
-//         var twiml = new twilio.TwimlResponse();
-//         twiml.message(result);
-//         res.writeHead(200, {'Content-Type': 'text/xml'});
-//         res.end(twiml.toString());
-//     });
-// });
+app.post('/twilio', function (req, res) {
+    console.log("Received a Message From User");
+    // console.log(req.body);
+    var message = req.body.Body;
+    var senderPhoneNumber = req.body.From;
+    chatbot.sendRequestToChatbot(message, '<33>', senderPhoneNumber);
+    var twimlResponse = twilio.TwimlResponse();
+    twimlResponse.message("");
+    res.writeHead(200, {'Content-Type': 'text/xml'});
+    res.end(twimlResponse.toString());
+});
 
 app.listen(3000, function () {
     console.log('App Started!');
