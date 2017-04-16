@@ -128,11 +128,18 @@ app.post('/twilio', function (req, res) {
     // console.log(req.body);
     var message = req.body.Body;
     var senderPhoneNumber = req.body.From;
-    chatbot.sendRequestToChatbot(message, '<33>', senderPhoneNumber);
+    chatbot.handleChatbotRequest(message, '<33>', senderPhoneNumber);
     var twimlResponse = twilio.TwimlResponse();
     twimlResponse.message("");
     res.writeHead(200, {'Content-Type': 'text/xml'});
     res.end(twimlResponse.toString());
+});
+
+var json_body_parser = bodyParser.json();
+app.post('/chatbot/webhook/', json_body_parser, function(req, res) {
+   console.log('Received a WEBHOOK request.');
+   //console.log(req.body);
+   //chatbot.fulfillRequest(req.body);
 });
 
 app.listen(3000, function () {

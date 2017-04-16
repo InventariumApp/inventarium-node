@@ -8,7 +8,7 @@ var aws = require('./aws.js');
 var firebase = require('./firebase.js');
 var twilioClient = require('./twilioClient');
 
-exports.sendRequestToChatbot = function(message, sessionId, phoneNumber) {
+exports.handleChatbotRequest = function(message, sessionId, phoneNumber) {
     var options = {
         sessionId: sessionId
     }
@@ -26,7 +26,7 @@ exports.sendRequestToChatbot = function(message, sessionId, phoneNumber) {
     request.end();
 };
 
-function doAction(action, item, userEmail) {
+function doAction(action, item, userEmail, phoneNumber) {
     switch(action) {
         case 'removeItemFromShoppingList':
             removeItemFromShoppingList(item, userEmail);
@@ -35,18 +35,36 @@ function doAction(action, item, userEmail) {
             addItemToShoppingList(item, userEmail);
             break;
         case 'addItemToPantryList':
+            addItemToPantryList(item, userEmail);
             break;
         case 'removeItemFromPantryList':
+            removeItemFromPantryList(item, userEmail);
             break;
-        case 'getShoopingListItems':
+        case 'showShoppingList':
+            sendUsersShoppingList(userEmail, phoneNumber);
+            break;
+        case 'showPantryList':
+            sendUsersPantryList(userEmail, phoneNumber);
             break;
         default:
             break;
     }
 }
 
+function sendUsersShoppingList(userEmail, phoneNumber) {
+    firebase.getUsersList(userEmail, 'shopping-list').then(function(list) {
+        twilioClient.sendSms(phoneNumber, list);
+    });
+}
+
+function sendUsersPantryList(userEmail, phoneNumber) {
+    firebase.getUsersList(userEmail, 'pantry-list').then(function(list) {
+        twilioClient.sendSms(phoneNumber, list);
+    });
+}
+
 function removeItemFromShoppingList(item, userEmail) {
-    console.log("Deleting ", item, " from list");
+    console.log("Deleting ", item, " from SHOPPING list");
     firebase.findShoppingListItemToRemove(userEmail, item).then(function(fullItemName) {
         if(fullItemName !== null) {
             firebase.removeItemFromShoppingList(userEmail, fullItemName);
@@ -59,9 +77,20 @@ function addItemToShoppingList(item, userEmail) {
     aws.getProductDataForName(undefined, item, userEmail, firebase.addItemToShoppingList);
 }
 
-// Parse the response
-// TODO: Check for item is nil etc.
-// TODO: Pull out database interaction into another method
+function removeItemFromPantryList(item, userEmail) {
+    console.log("Deleting ", item, " from PANTRY list");
+    firebase.findPantryListItemToRemove(userEmail, item).then(function(fullItemName) {
+        if(fullItemName !== null) {
+            firebase.removeItemFromPantryList(userEmail, fullItemName);
+        }
+    });
+}
+
+function addItemToPantryList(item, userEmail) {
+    // first param is res... not needed here
+    aws.getProductDataForName(undefined, item, userEmail, firebase.addItemToPantryList);
+}
+
 function parseResponseAndKickoffAction(response, phoneNumber) {
     var responseResult = response.result;
     var responseSpeech = responseResult.fulfillment.speech;
@@ -70,7 +99,12 @@ function parseResponseAndKickoffAction(response, phoneNumber) {
     var cleanPhoneNumber = phoneNumber.replace(/\+/g, "");
     console.log(cleanPhoneNumber);
     firebase.getUserEmailForUserPhoneNumber(cleanPhoneNumber).then(function(userEmail) {
-        doAction(action, responseItem, userEmail);
+        doAction(action, responseItem, userEmail, phoneNumber);
     });
     return responseSpeech;
 };
+
+exports.fulfillRequest = function(response) {
+    console.log("ready to fulfill request");
+    //parseResponseAndKickoffAction(request);
+}

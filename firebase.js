@@ -79,8 +79,33 @@ exports.addItemToShoppingList = function(userEmail, item, price, imageUrl) {
     });
 }
 
+exports.addItemToPantryList = function(userEmail, item, price, imageUrl) {
+    return admin.database().ref('lists/' + userEmail + '/pantry-list/' + item).set({
+        addedByUser: userEmail,
+        count: 1,
+        imageURL: imageUrl,
+        name: item,
+        price: price
+    });
+}
+
 exports.findShoppingListItemToRemove = function(userEmail, item) {
     return admin.database().ref('lists/' + userEmail + '/shopping-list/').once('value').then(function(snapshot) {
+        var allItems = snapshot.val();
+        var targetItem = null;
+        for(currentItem in allItems) {
+            if(currentItem.toLowerCase().includes(item.toLowerCase())) {
+                targetItem = currentItem;
+                console.log("Item to delete: ", targetItem);
+                return targetItem;
+            }
+        }
+        return targetItem;
+    });
+}
+
+exports.findPantryListItemToRemove = function(userEmail, item) {
+    return admin.database().ref('lists/' + userEmail + '/pantry-list/').once('value').then(function(snapshot) {
         var allItems = snapshot.val();
         var targetItem = null;
         for(currentItem in allItems) {
@@ -98,6 +123,10 @@ exports.removeItemFromShoppingList = function(userEmail, item) {
     return admin.database().ref('lists/' + userEmail + '/shopping-list/').child(item).remove();
 }
 
+exports.removeItemFromPantryList = function(userEmail, item) {
+    return admin.database().ref('lists/' + userEmail + '/pantry-list/').child(item).remove();
+}
+
 exports.getUserEmailForUserPhoneNumber = function(phoneNumber) {
     return admin.database().ref('lists/').once('value').then(function(snapshot) {
        var allUsers = snapshot.val();
@@ -110,6 +139,20 @@ exports.getUserEmailForUserPhoneNumber = function(phoneNumber) {
            }
        }
        return null;
+    });
+}
+
+exports.getUsersList = function(userEmail, listType) {
+    return admin.database().ref('lists/' + userEmail + '/' + listType +'/').once('value').then(function(snapshot){
+        var list = snapshot.val();
+        var listString = '';
+        for(item in list) {
+            listString = listString.concat(item);
+            listString = listString.concat(', ');
+        }
+        // get rid of trailing comma and space
+        listString = listString.substring(0, listString.length - 2);
+        return listString;
     });
 }
 
