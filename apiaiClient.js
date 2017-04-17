@@ -16,9 +16,7 @@ exports.handleChatbotRequest = function(message, sessionId, phoneNumber) {
     var request = app.textRequest(message, options);
     // On response, parse it and return it with callback
     request.on('response', function(response) {
-        var responseSpeech = parseResponseAndKickoffAction(response, phoneNumber);
-        // text user the speech resut from api.ai
-        twilioClient.sendSms(phoneNumber, responseSpeech);
+        parseResponseAndKickoffAction(response, phoneNumber);
     });
     request.on('error', function(error) {
         console.log(error);
@@ -97,9 +95,27 @@ function parseResponseAndKickoffAction(response, phoneNumber) {
     var responseItem = responseResult.parameters.item;
     var action = responseResult.action;
     var cleanPhoneNumber = phoneNumber.replace(/\+/g, "");
-    console.log(cleanPhoneNumber);
+    console.log("SMS from: ", cleanPhoneNumber);
     firebase.getUserEmailForUserPhoneNumber(cleanPhoneNumber).then(function(userEmail) {
-        doAction(action, responseItem, userEmail, phoneNumber);
+        // if no email returned, check if this is a ohone number of a shared user
+        if(userEmail === null) {
+            firebase.getUserEmailForSharedUser(cleanPhoneNumber).then(function(email) {
+                if(email !== null) {
+                    console.log(cleanPhoneNumber, " is a shared user.");
+                    // user is a shared user
+                    sendTwilioApiaiResponse(cleanPhoneNumber, responseSpeech);
+                    doAction(action, responseItem, userEmail, cleanPhoneNumber);
+                }
+                else {
+                    sendTwilioNoListResponse(cleanPhoneNumber);
+                }
+            });
+        }
+        else {
+            // user is owner of the list
+            sendTwilioApiaiResponse(cleanPhoneNumber, responseSpeech);
+            doAction(action, responseItem, userEmail, cleanPhoneNumber);
+        }
     });
     return responseSpeech;
 };
@@ -107,4 +123,12 @@ function parseResponseAndKickoffAction(response, phoneNumber) {
 exports.fulfillRequest = function(response) {
     console.log("ready to fulfill request");
     //parseResponseAndKickoffAction(request);
+}
+
+function sendTwilioNoListResponse(phoneNumber) {
+    twilioClient.sendSms(phoneNumber, 'Sorry, you do not have access to any lists.');
+}
+
+function sendTwilioApiaiResponse(phoneNumber, responseSpeech) {
+    twilioClient.sendSms(phoneNumber, responseSpeech);
 }

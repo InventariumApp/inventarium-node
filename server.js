@@ -12,10 +12,20 @@ var pool = mysql.createPool(require('./mysql_config'));
 var barcodeDb = require('./db');
 var aws = require('./aws.js');
 var firebase = require('./firebase.js');
+var path = require('path');
 
 var exphbs  = require('express-handlebars');
 var app = express();
+// var fs = require('fs');
+// var http = require('https');
+// var sslPath = '/etc/letsencrypt/live/inventarium.me/';
+// var options = {
+//     key: fs.readFileSync(sslPath + 'privkey.pem'),
+//     cert: fs.readFileSync(sslPath + 'fullchain.pem')
+// };
 
+
+app.use(express.static('static'));
 // Setting up handlebars
 app.engine('handlebars', exphbs(
     {
@@ -142,6 +152,13 @@ app.post('/chatbot/webhook/', json_body_parser, function(req, res) {
    //chatbot.fulfillRequest(req.body);
 });
 
+app.get('/', function(req, res) {
+
+});
+
+// this.server = http.createServer(options, this.app);
+// this.io = require('socket.io').listen(this.server);
+// this.server.listen(443);
 app.listen(3000, function () {
     console.log('App Started!');
 });

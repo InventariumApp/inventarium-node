@@ -156,6 +156,14 @@ exports.getUsersList = function(userEmail, listType) {
     });
 }
 
+exports.getUserEmailForSharedUser = function(phoneNumber) {
+    return admin.database().ref('share-links/' + phoneNumber + '/access-to').once('value').then(function(snapshot){
+        var email = snapshot.val();
+        console.log("Email for shared user: ", email);
+        return email;
+    });
+}
+
 
 function getItemCount(itemHistory) {
     var count = 0;
@@ -179,4 +187,10 @@ function getItemCount(itemHistory) {
 //         }
 //     }
 //     return targetItem;
+// });
+
+// admin.database().ref('share-links/' + '16506819090' + '/access-to').once('value').then(function(snapshot){
+//     var email = snapshot.val();
+//     console.log(email);
+//     return email;
 // });
