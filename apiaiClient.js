@@ -180,13 +180,25 @@ function removeItemFromPantryListWebhook(ivanResponse, res) {
 
 function sendUsersShoppingListWebhook(ivanResponse, res) {
     firebase.getUsersList(DEMO_EMAIL, 'shopping-list').then(function(list) {
-        buildAndSendApiAiResponse('You need to buy ' + list, res);
+        if(list === '') {
+            var speech = 'you do not have anything on your shopping list';
+            buildAndSendApiAiResponse(speech, res);
+        }
+        else {
+            buildAndSendApiAiResponse('You need to buy ' + list, res);
+        }
     });
 }
 
 function sendUsersPantryListWebhook(ivanResponse, res) {
     firebase.getUsersList(DEMO_EMAIL, 'pantry-list').then(function(list) {
-        buildAndSendApiAiResponse('You currently have ' + list, res);
+        if(list === '') {
+            var speech = 'you do not have anything in your pantry';
+            buildAndSendApiAiResponse(speech, res);
+        }
+        else {
+            buildAndSendApiAiResponse('You currently have ' + list, res);
+        }
     });
 }
 
