@@ -183,7 +183,7 @@ function sendUsersShoppingListWebhook(ivanResponse, res) {
 }
 
 function sendUsersPantryListWebhook(ivanResponse, res) {
-    firebase.getUsersList(userEmail, 'pantry-list').then(function(list) {
+    firebase.getUsersList(DEMO_EMAIL, 'pantry-list').then(function(list) {
         buildAndSendApiAiResponse('You currently have ' + list, res);
     });
 }
