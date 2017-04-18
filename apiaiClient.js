@@ -7,6 +7,7 @@ var app = apiai(config.apiaiToken);
 var aws = require('./aws.js');
 var firebase = require('./firebase.js');
 var twilioClient = require('./twilioClient');
+const DEMO_EMAIL = 'iphoneaccount@gmail,com';
 
 exports.handleChatbotRequest = function(message, sessionId, phoneNumber) {
     var options = {
@@ -120,10 +121,81 @@ function parseResponseAndKickoffAction(response, phoneNumber) {
     return responseSpeech;
 };
 
-exports.fulfillRequest = function(response) {
-    console.log("ready to fulfill request");
-    //parseResponseAndKickoffAction(request);
+exports.fulfillRequest = function(apiaiResponse, res) {
+    console.log("Fulfilling Api.Ai request...");
+    var speech
 }
+
+/**
+ * uses our default user email for Demo purposes
+ * @param action
+ * @param res
+ */
+function doWebhookAction(action, ivanResponse, res) {
+    switch(action) {
+        case 'removeItemFromShoppingList':
+            removeItemFromShoppingListWebhook(ivanResponse, res);
+            break;
+        case 'addItemToShoppingList':
+            addItemToShoppingListWebhook(ivanResponse, res);
+            break;
+        case 'addItemToPantryList':
+            addItemToPantryListWebhook(ivanResponse, res);
+            break;
+        case 'removeItemFromPantryList':
+            removeItemFromPantryListWebhook(ivanResponse, res);
+            break;
+        case 'showShoppingList':
+            sendUsersShoppingListWebhook(ivanResponse, res);
+            break;
+        case 'showPantryList':
+            sendUsersPantryListWebhook(ivanResponse, res);
+            break;
+        default:
+            break;
+    }
+}
+
+function removeItemFromShoppingListWebhook(ivanResponse, res) {
+    removeItemFromShoppingList(ivanResponse.result.parameters.item, DEMO_EMAIL);
+    buildAndSendApiAiResponse(ivanResponse.fulfillment.speech, res);
+}
+
+function addItemToShoppingListWebhook(ivanResponse, res) {
+    addItemToShoppingList(ivanResponse.result.parameters.item, DEMO_EMAIL);
+    buildAndSendApiAiResponse(ivanResponse.result.fulfillment.speech, res);
+}
+
+function addItemToPantryListWebhook(ivanResponse, res) {
+    addItemToPantryList(ivanResponse.result.parameters.item, DEMO_EMAIL);
+    buildAndSendApiAiResponse(ivanResponse.result.fulfillment.speech, res);
+}
+
+function removeItemFromPantryListWebhook(ivanResponse, res) {
+    removeItemFromPantryList(ivanResponse.result.parameter.item, DEMO_EMAIL);
+    buildAndSendApiAiResponse(ivanResponse.result.fulfillment.speech, res);
+}
+
+function sendUsersShoppingListWebhook(ivanResponse, res) {
+    firebase.getUsersList(DEMO_EMAIL, 'shopping-list').then(function(list) {
+        buildAndSendApiAiResponse('You need to buy ' + list, res);
+    });
+}
+
+function sendUsersPantryListWebhook(ivanResponse, res) {
+    firebase.getUsersList(userEmail, 'pantry-list').then(function(list) {
+        buildAndSendApiAiResponse('You currently have ' + list, res);
+    });
+}
+
+function buildAndSendApiAiResponse(speech, res) {
+    var data = {};
+    data['speech'] = speech;
+    res.json();
+}
+
+
+// TWILIO UTIL RESPONSE WRAPPERS
 
 function sendTwilioNoListResponse(phoneNumber) {
     twilioClient.sendSms(phoneNumber, 'Sorry, you do not have access to any lists.');
