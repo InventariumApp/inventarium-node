@@ -44,7 +44,7 @@ exports.getProductDataForBarcode = function(res, upc) {
             // console.log('\n\n');
             var rawProductName = productObj['ItemAttributes']['Title'];
             var productName = cleanName(rawProductName);
-            getPrice(asin, productName, res);
+            getPrice(asin, productName, null, res, undefined);
         }
     });
 }
@@ -91,11 +91,11 @@ function getPrice(asin, cleanName, userEmail, res, firebaseCallback) {
     prodAdv.call("ItemLookup", options, function(err, result) {
         if (err) {
             console.log("Error: ", err);
-            res.json({'code': 200, 'status': 'No result for barcode: ' + upc});
+            res.json({'code': 200, 'status': 'No result for barcode: ' + asin});
         }
         else if (typeof result === 'undefined') {
             console.log('No result for item');
-            res.json({'code': 200, 'status': 'No result for barcode: ' + upc});
+            res.json({'code': 200, 'status': 'No result for barcode: ' + asin});
         }
         else {
             console.log(result);

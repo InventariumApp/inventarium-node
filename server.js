@@ -13,6 +13,9 @@ var barcodeDb = require('./db');
 var aws = require('./aws.js');
 var firebase = require('./firebase.js');
 var path = require('path');
+var fs = require('fs');
+var https = require('https');
+
 
 var exphbs  = require('express-handlebars');
 var app = express();
@@ -23,6 +26,12 @@ var app = express();
 //     key: fs.readFileSync(sslPath + 'privkey.pem'),
 //     cert: fs.readFileSync(sslPath + 'fullchain.pem')
 // };
+
+var options = {
+    ca: fs.readFileSync('/home/israel/inventarium_me.ca-bundle'),
+    cert: fs.readFileSync('/home/israel/inventarium_me.crt'),
+    key: fs.readFileSync('/home/israel/inventarium_me.key')
+};
 
 
 app.use(express.static('static'));
@@ -145,20 +154,28 @@ app.post('/twilio', function (req, res) {
     res.end(twimlResponse.toString());
 });
 
+app.post('tiwlio/fail', function() {
+   console.log("Error from twilio!");
+   console.log(req.body.Body);
+});
+
 var json_body_parser = bodyParser.json();
 app.post('/chatbot/webhook/', json_body_parser, function(req, res) {
    console.log('Received a WEBHOOK request.');
+   console.log(req.body);
+   if(typeof req.body.originalRequest === 'undefined') {
+       // this request is from sms... ignore it. It is already being handles by twilio endpoint
+       console.log('Webhook request from SMS... ignoring');
+   }
+   else if(req.body.originalRequest.source === 'google') {
+       console.log('Request from Ivan');
+       chatbot.fulfillRequest(req.body);
+   }
    //console.log(req.body);
-   //chatbot.fulfillRequest(req.body);
 });
 
-app.get('/', function(req, res) {
 
-});
-
-// this.server = http.createServer(options, this.app);
-// this.io = require('socket.io').listen(this.server);
-// this.server.listen(443);
-app.listen(3000, function () {
-    console.log('App Started!');
+// SECURE SERVER :)
+https.createServer(options, app).listen(443, function() {
+    console.log("App Started!");
 });
