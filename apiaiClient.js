@@ -123,7 +123,8 @@ function parseResponseAndKickoffAction(response, phoneNumber) {
 
 exports.fulfillRequest = function(apiaiResponse, res) {
     console.log("Fulfilling Api.Ai request...");
-    var speech
+    var action = apiaiResponse.result.action;
+    doWebhookAction(action, apiaiResponse, res);
 }
 
 /**
@@ -132,6 +133,7 @@ exports.fulfillRequest = function(apiaiResponse, res) {
  * @param res
  */
 function doWebhookAction(action, ivanResponse, res) {
+    console.log("Performing action: ", action);
     switch(action) {
         case 'removeItemFromShoppingList':
             removeItemFromShoppingListWebhook(ivanResponse, res);
@@ -189,9 +191,10 @@ function sendUsersPantryListWebhook(ivanResponse, res) {
 }
 
 function buildAndSendApiAiResponse(speech, res) {
+    console.log("Responding with speech: ", speech);
     var data = {};
     data['speech'] = speech;
-    res.json();
+    res.json(data);
 }
 
 

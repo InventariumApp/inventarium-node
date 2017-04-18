@@ -40,7 +40,7 @@ exports.getProductDataForBarcode = function(res, upc) {
                 asin = productObj['ASIN'];
             }
             console.log("Product Barcode JSON:");
-            console.log(productObj);
+            // console.log(productObj);
             // console.log('\n\n');
             var rawProductName = productObj['ItemAttributes']['Title'];
             var productName = cleanName(rawProductName);
@@ -98,7 +98,7 @@ function getPrice(asin, cleanName, userEmail, res, firebaseCallback) {
             res.json({'code': 200, 'status': 'No result for barcode: ' + asin});
         }
         else {
-            console.log(result);
+            // console.log(result);
             var price = result['Items']['Item']['OfferSummary']["LowestNewPrice"]['FormattedPrice'];
             if(typeof price !== 'undefined') {
                 console.log(cleanName, "    Price: ", price);
@@ -143,7 +143,7 @@ function getImageUrl(asin, name, price, userEmail, res, firebaseCallback) {
             var imageUrl = productObj["LargeImage"]["URL"];
             // respond with price, the name of the product, and the image url
             console.log("Image URL: ", imageUrl);
-            console.log(typeof firebaseCallback);
+            // console.log(typeof firebaseCallback);
             if(typeof res !== 'undefined') {
                 res.json({"clean_nm": name, "price": price, "image_url": imageUrl});
             }
@@ -166,23 +166,3 @@ function cleanName(name) {
     }
     return cleanName;
 }
-
-
-// var options = {IdType: "ASIN", ItemId: "B000UENHH4", ResponseGroup: "Images"}
-// prodAdv.call("ItemLookup", options, function(err, result) {
-//     if (err) {
-//         console.log("Error: ", err);
-//     }
-//     else if (typeof result === 'undefined') {
-//         console.log('No result for item');
-//     }
-//     else {
-//         console.log(JSON.stringify(result));
-//         console.log('\n\n');
-//
-//         var productObj = (typeof result['Items']['Item'].length === 'undefined')
-//             ? result['Items']['Item'] : result['Items']['Item'][0]
-//         var imageUrl = productObj["Items"]["Item"]["MediumImage"]["URL"];
-//         console.log("Image URL: ", imageUrl);
-//     }
-// });

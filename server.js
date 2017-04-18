@@ -162,14 +162,14 @@ app.post('tiwlio/fail', function() {
 var json_body_parser = bodyParser.json();
 app.post('/chatbot/webhook/', json_body_parser, function(req, res) {
    console.log('Received a WEBHOOK request.');
-   console.log(req.body);
+   // console.log(req.body);
    if(typeof req.body.originalRequest === 'undefined') {
        // this request is from sms... ignore it. It is already being handles by twilio endpoint
        console.log('Webhook request from SMS... ignoring');
    }
    else if(req.body.originalRequest.source === 'google') {
        console.log('Request from Ivan');
-       chatbot.fulfillRequest(req.body);
+       chatbot.fulfillRequest(req.body, res);
    }
    //console.log(req.body);
 });
