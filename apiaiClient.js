@@ -233,7 +233,7 @@ function addAndToList(listString) {
             retVal = retVal.concat(', and ');
         }
         else if(i === items.length - 1) {
-            // at last item, just write the item. 'and is already in place'
+            // at last item, just write the item. 'and' is already in place
             retVal = retVal.concat(items[i]);
         }
         else {

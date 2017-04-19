@@ -175,24 +175,3 @@ function getItemCount(itemHistory) {
     return count;
 }
 
-
-
-//admin.database().ref('lists/' + 'iphoneaccount@gmail,com' + '/shopping-list/').child('Jif Creamy Peanut Butter Twin Pack').remove();
-// admin.database().ref('lists/' + 'iphoneaccount@gmail,com' + '/shopping-list/').once('value').then(function(snapshot) {
-//     var allItems = snapshot.val();
-//     var targetItem = null;
-//     for(currentItem in allItems) {
-//         if(currentItem.toLowerCase().includes('crest')) {
-//             targetItem = currentItem;
-//             console.log(targetItem);
-//             return targetItem;
-//         }
-//     }
-//     return targetItem;
-// });
-
-// admin.database().ref('share-links/' + '16506819090' + '/access-to').once('value').then(function(snapshot){
-//     var email = snapshot.val();
-//     console.log(email);
-//     return email;
-// });
