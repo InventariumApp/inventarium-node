@@ -151,7 +151,7 @@ exports.getUsersList = function(userEmail, listType) {
             listString = listString.concat(', ');
         }
         // get rid of trailing comma and space if we added items to the string
-        if(listString !=== '') {
+        if(listString !== '') {
             listString = listString.substring(0, listString.length - 2);
         }
         return listString;

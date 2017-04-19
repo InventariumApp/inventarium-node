@@ -174,7 +174,7 @@ function addItemToPantryListWebhook(ivanResponse, res) {
 }
 
 function removeItemFromPantryListWebhook(ivanResponse, res) {
-    removeItemFromPantryList(ivanResponse.result.parameter.item, DEMO_EMAIL);
+    removeItemFromPantryList(ivanResponse.result.parameters.item, DEMO_EMAIL);
     buildAndSendApiAiResponse(ivanResponse.result.fulfillment.speech, res);
 }
 
@@ -185,7 +185,8 @@ function sendUsersShoppingListWebhook(ivanResponse, res) {
             buildAndSendApiAiResponse(speech, res);
         }
         else {
-            buildAndSendApiAiResponse('You need to buy ' + list, res);
+            var grammarCorrectString = addAndToList(list);
+            buildAndSendApiAiResponse('You need to buy ' + grammarCorrectString, res);
         }
     });
 }
@@ -197,7 +198,8 @@ function sendUsersPantryListWebhook(ivanResponse, res) {
             buildAndSendApiAiResponse(speech, res);
         }
         else {
-            buildAndSendApiAiResponse('You currently have ' + list, res);
+            var grammarCorrectString = addAndToList(list);
+            buildAndSendApiAiResponse('You currently have ' + grammarCorrectString, res);
         }
     });
 }
@@ -218,4 +220,28 @@ function sendTwilioNoListResponse(phoneNumber) {
 
 function sendTwilioApiaiResponse(phoneNumber, responseSpeech) {
     twilioClient.sendSms(phoneNumber, responseSpeech);
+}
+
+function addAndToList(listString) {
+    var i = 0;
+    var items = listString.split(",");
+    var retVal = '';
+    while(i < items.length) {
+        if(i === items.length - 2) {
+            // at item before last item. Write 'item, and '
+            retVal = retVal.concat(items[i]);
+            retVal = retVal.concat(', and ');
+        }
+        else if(i === items.length - 1) {
+            // at last item, just write the item. 'and is already in place'
+            retVal = retVal.concat(items[i]);
+        }
+        else {
+            // everything else
+            retVal = retVal.concat(items[i]);
+            retVal = retVal.concat(', ');
+        }
+        i++;
+    }
+    return retVal;
 }

@@ -55,7 +55,8 @@ exports.getProductDataForName = function(res, name, userEmail, firebaseCallback)
         if (err) {
             console.log("Error: ", err);
         }
-        else if (typeof result === 'undefined') {
+        else if (typeof result === 'undefined' || typeof result['Items'] === 'undefined'
+            || typeof result['Items']['Item'] === 'undefined') {
             console.log('No result for item');
         }
         else {
