@@ -44,7 +44,12 @@ exports.getProductDataForBarcode = function(res, upc) {
             // console.log('\n\n');
             var rawProductName = productObj['ItemAttributes']['Title'];
             var productName = cleanName(rawProductName);
-            getPrice(asin, productName, null, res, undefined);
+            var category = productObj['ItemAttributes']['ProductGroup'];
+            var data = {};
+            data['clean_nm'] = productName;
+            data['category'] = category;
+            data['asin'] = asin;
+            getPrice(data, null, res, undefined);
         }
     });
 }
@@ -70,11 +75,16 @@ exports.getProductDataForName = function(res, name, userEmail, firebaseCallback)
                 productObj = result['Items']['Item'][0];
                 asin = productObj['ASIN'];
             }
-            // console.log(productObj);
+             console.log(productObj);
             // console.log('\n\n');
             var rawProductName = productObj['ItemAttributes']['Title'];
+            var category = productObj['ItemAttributes']['ProductGroup'];
             var productName = cleanName(rawProductName);
-            getPrice(asin, productName, userEmail, res, firebaseCallback);
+            var data = {};
+            data['clean_nm'] = productName;
+            data['category'] = category;
+            data['asin'] = asin;
+            getPrice(data, userEmail, res, firebaseCallback);
         }
     });
 }
@@ -87,24 +97,25 @@ exports.getProductDataForName = function(res, name, userEmail, firebaseCallback)
  * @param cleanName
  * @param res
  */
-function getPrice(asin, cleanName, userEmail, res, firebaseCallback) {
-    var options = {ResponseGroup: "Offers", IdType: "ASIN", ItemId: asin}
+function getPrice(data, userEmail, res, firebaseCallback) {
+    var options = {ResponseGroup: "Offers", IdType: "ASIN", ItemId: data.asin}
     prodAdv.call("ItemLookup", options, function(err, result) {
         if (err) {
             console.log("Error: ", err);
-            res.json({'code': 200, 'status': 'No result for barcode: ' + asin});
+            res.json({'code': 200, 'status': 'No result for barcode: ' + data.asin});
         }
         else if (typeof result === 'undefined') {
             console.log('No result for item');
-            res.json({'code': 200, 'status': 'No result for barcode: ' + asin});
+            res.json({'code': 200, 'status': 'No result for barcode: ' + data.asin});
         }
         else {
             // console.log(result);
             var price = result['Items']['Item']['OfferSummary']["LowestNewPrice"]['FormattedPrice'];
             if(typeof price !== 'undefined') {
-                console.log(cleanName, "    Price: ", price);
+                console.log(data.clean_nm, "    Price: ", price);
                 // pass data to getImageUrl to get data
-                getImageUrl(asin, cleanName, price, userEmail, res, firebaseCallback);
+                data['price'] = price;
+                getImageUrl(data, userEmail, res, firebaseCallback);
             }
         }
     });
@@ -118,8 +129,8 @@ function getPrice(asin, cleanName, userEmail, res, firebaseCallback) {
  * @param price
  * @param res
  */
-function getImageUrl(asin, name, price, userEmail, res, firebaseCallback) {
-    var options = {IdType: "ASIN", ItemId: asin, ResponseGroup: "Images"}
+function getImageUrl(data, userEmail, res, firebaseCallback) {
+    var options = {IdType: "ASIN", ItemId: data.asin, ResponseGroup: "Images"}
     return prodAdv.call("ItemLookup", options, function(err, result) {
         if (err) {
             console.log("Error: ", err);
@@ -134,23 +145,24 @@ function getImageUrl(asin, name, price, userEmail, res, firebaseCallback) {
             if(typeof result['Items']['Item'].length === 'undefined') {
                 console.log("set item 1");
                 productObj = result['Items']['Item'];
-                asin = productObj['ASIN'];
+                data.asin = productObj['ASIN'];
             }
             else {
                 console.log("set item 2");
                 productObj = result['Items']['Item'][0];
-                asin = productObj['ASIN'];
+                data.asin = productObj['ASIN'];
             }
             var imageUrl = productObj["LargeImage"]["URL"];
             // respond with price, the name of the product, and the image url
             console.log("Image URL: ", imageUrl);
             // console.log(typeof firebaseCallback);
             if(typeof res !== 'undefined') {
-                res.json({"clean_nm": name, "price": price, "image_url": imageUrl});
+                data['image_url'] = imageUrl;
+                res.json(data);
             }
             if(typeof firebaseCallback === 'function') {
                 console.log("Type of firebase callback is function");
-                firebaseCallback(userEmail, name, price, imageUrl);
+                firebaseCallback(userEmail, data.clean_nm, data.price, data.imageUrl);
             }
             else {
                 console.log("Type of firebase callback is NOT function");
