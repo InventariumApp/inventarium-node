@@ -15,6 +15,7 @@ var firebase = require('./firebase.js');
 var path = require('path');
 var fs = require('fs');
 var https = require('https');
+var moment = require('moment');
 
 
 var exphbs  = require('express-handlebars');
@@ -73,6 +74,7 @@ app.get('/user', function (req, res) {
 
 app.get('/product_data_for_barcode', function (req, res) {
     console.log("Received barcode request.");
+    console.log(req.body);
     //barcodeDb.getProductName(req, res, pool, mysql); // MySQL Barcode Database
     aws.getProductDataForBarcode(res, req.query['barcode']);  // AWS Barcode
 });
@@ -136,6 +138,24 @@ app.get('/graphs/top_categories/:user', function(req, res) {
             chartData.push(results[key]);
         }
         res.render('categoryPiePage', {chartData: JSON.stringify(chartData),
+            chartLabels: JSON.stringify(chartLabels)}
+        );
+    });
+});
+
+app.get('/graphs/line_graph/:user/:item', function(req, res) {
+    console.log("Request to Line Graph");
+    const userEmail = decodeURIComponent(req.params.user);
+    const item = decodeURIComponent(req.params.item);
+    firebase.getLineGraphData(userEmail, item).then(function(results) {
+        var chartData = [];
+        var chartLabels = [];
+
+        for(var key in results) {
+            chartLabels.push(moment().day('Monday').week(key).format('MM/DD'));
+            chartData.push(results[key]);
+        }
+        res.render('lineGraphPage', {chartData: JSON.stringify(chartData),
             chartLabels: JSON.stringify(chartLabels)}
         );
     });

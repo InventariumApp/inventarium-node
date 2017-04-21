@@ -1,6 +1,7 @@
 var admin = require("firebase-admin");
 var serviceAccount = require("./Firebase_server_key.json");
 var twilioClient = require('./twilioClient.js');
+var moment = require('moment');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -196,6 +197,27 @@ exports.getItemCategoryCounts = function(userEmail) {
     });
 }
 
+exports.getLineGraphData = function(userEmail, item) {
+    return admin.database().ref('lists/' + userEmail + '/item-history/' + item).once('value').then(function(snapshot) {
+        var dict = {};
+        snapshot.forEach(function(child) {
+            if(child.key !== 'category') {
+                var week = moment(child.val()).week().toString();
+                if(typeof dict[week] === 'undefined') {
+                    dict[week] = 1;
+                }
+                else {
+                    var count = dict[week];
+                    count++;
+                    dict[week] = count;
+                }
+            }
+        });
+        console.log(dict);
+        return dict;
+    });
+}
+
 
 function getItemCount(itemHistory) {
     var count = 0;
@@ -206,19 +228,22 @@ function getItemCount(itemHistory) {
 }
 
 
-// admin.database().ref('lists/' + 'iphoneaccount@gmail,com' + '/item-history/').once('value').then(function(snapshot){
+// admin.database().ref('lists/' + "iphoneaccount@gmail,com" + '/item-history/' + "water bottles").once('value').then(function(snapshot) {
 //     var dict = {};
-//     snapshot.forEach(function(child){
-//         var category = child.val().category;
-//         if(typeof dict[category] === 'undefined') {
-//             dict[category] = 1;
-//         }
-//         else {
-//             var count = dict[category];
-//             count++;
-//             dict[category] = count;
+//     snapshot.forEach(function(child) {
+//         if(child.key !== 'category') {
+//             var week = moment(child.val()).week().toString();
+//             if(typeof dict[week] === 'undefined') {
+//                 dict[week] = 1;
+//             }
+//             else {
+//                 var count = dict[week];
+//                 count++;
+//                 dict[week] = count;
+//             }
 //         }
 //     });
 //     console.log(dict);
+//     return dict;
 // });
 
