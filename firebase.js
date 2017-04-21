@@ -166,6 +166,25 @@ exports.getUserEmailForSharedUser = function(phoneNumber) {
     });
 }
 
+exports.getItemCategoryCounts = function(userEmail) {
+    return admin.database().ref('lists/' + userEmail + '/item-history/').once('value').then(function(snapshot) {
+        var dict = {};
+        snapshot.forEach(function (child) {
+            var category = child.val().category;
+            if (typeof dict[category] === 'undefined') {
+                dict[category] = 1;
+            }
+            else {
+                var count = dict[category];
+                count++;
+                dict[category] = count;
+            }
+        });
+        console.log(dict);
+        return dict;
+    });
+}
+
 
 function getItemCount(itemHistory) {
     var count = 0;
@@ -174,4 +193,21 @@ function getItemCount(itemHistory) {
     }
     return count;
 }
+
+
+// admin.database().ref('lists/' + 'iphoneaccount@gmail,com' + '/item-history/').once('value').then(function(snapshot){
+//     var dict = {};
+//     snapshot.forEach(function(child){
+//         var category = child.val().category;
+//         if(typeof dict[category] === 'undefined') {
+//             dict[category] = 1;
+//         }
+//         else {
+//             var count = dict[category];
+//             count++;
+//             dict[category] = count;
+//         }
+//     });
+//     console.log(dict);
+// });
 
