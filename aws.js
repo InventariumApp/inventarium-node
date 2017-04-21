@@ -155,14 +155,14 @@ function getImageUrl(data, userEmail, res, firebaseCallback) {
             var imageUrl = productObj["LargeImage"]["URL"];
             // respond with price, the name of the product, and the image url
             console.log("Image URL: ", imageUrl);
+            data['image_url'] = imageUrl;
             // console.log(typeof firebaseCallback);
             if(typeof res !== 'undefined') {
-                data['image_url'] = imageUrl;
                 res.json(data);
             }
             if(typeof firebaseCallback === 'function') {
                 console.log("Type of firebase callback is function");
-                firebaseCallback(userEmail, data.clean_nm, data.price, data.imageUrl);
+                firebaseCallback(userEmail, data);
             }
             else {
                 console.log("Type of firebase callback is NOT function");

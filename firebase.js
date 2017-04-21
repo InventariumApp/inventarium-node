@@ -48,6 +48,7 @@ exports.shareWithPhoneNumber = function(userEmail, phoneNumber) {
     admin.database().ref('share-links/' + phoneNumber).set({
         "access-to": userEmail
     });
+    // TODO: send them an sms
 }
 
 exports.getTopProductsForUser = function(userEmail) {
@@ -69,23 +70,26 @@ exports.getTopProductsForUser = function(userEmail) {
     });
 }
 
-exports.addItemToShoppingList = function(userEmail, item, price, imageUrl) {
-    return admin.database().ref('lists/' + userEmail + '/shopping-list/' + item).set({
+exports.addItemToShoppingList = function(userEmail, data) {
+    console.log(data);
+    return admin.database().ref('lists/' + userEmail + '/shopping-list/' + data.clean_nm).set({
         addedByUser: userEmail,
         count: 1,
-        imageURL: imageUrl,
-        name: item,
-        price: price
+        imageURL: data.image_url,
+        name: data.clean_nm,
+        price: data.price,
+        category: data.category
     });
 }
 
-exports.addItemToPantryList = function(userEmail, item, price, imageUrl) {
-    return admin.database().ref('lists/' + userEmail + '/pantry-list/' + item).set({
+exports.addItemToPantryList = function(userEmail, data) {
+    return admin.database().ref('lists/' + userEmail + '/pantry-list/' + data.clean_nm).set({
         addedByUser: userEmail,
         count: 1,
-        imageURL: imageUrl,
-        name: item,
-        price: price
+        imageURL: data.image_url,
+        name: data.clean_nm,
+        price: data.price,
+        category: data.category
     });
 }
 
