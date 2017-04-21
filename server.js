@@ -110,8 +110,8 @@ app.get('/graphs/top_products/:user', function(req, res) {
 
         for(i in results) {
             if(count < 6) {
-                console.log(results[i]);
-                chartLabels.push(results[i][0]);
+                var currLabel = results[i][0];
+                chartLabels.push(currLabel.substring(0, 20));
                 chartData.push(results[i][1]);
             }
             count++;
@@ -199,3 +199,7 @@ app.post('/chatbot/webhook/', json_body_parser, function(req, res) {
 https.createServer(options, app).listen(443, function() {
     console.log("App Started!");
 });
+
+// app.listen(3000, function () {
+//     console.log('App Started!');
+// });

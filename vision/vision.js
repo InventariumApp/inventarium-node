@@ -13,6 +13,7 @@ const bucketName = 'nifty-acolyte-159120.appspot.com';
 
 exports.getImageData = function (fileName, res) {
     // Performs label detection on the remote file
+    console.log("Inide vision function");
     vision.detectLabels(storage.bucket(bucketName).file(fileName))
         .then((results) => {
             const labels = results[0];
@@ -22,7 +23,8 @@ exports.getImageData = function (fileName, res) {
                 res.json({"product_name": labels[0]});
             }
             else {
-                res.sendStatus(200);
+                console.log('No image detected');
+                res.json({"error":"no_image"});
             }
     });
 }
