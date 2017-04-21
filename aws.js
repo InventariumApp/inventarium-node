@@ -82,7 +82,7 @@ exports.getProductDataForName = function(res, name, userEmail, firebaseCallback)
             var productName = cleanName(rawProductName);
             var data = {};
             data['clean_nm'] = productName;
-            data['category'] = category;
+            data['category'] = category.toLowerCase();
             data['asin'] = asin;
             getPrice(data, userEmail, res, firebaseCallback);
         }
