@@ -78,6 +78,7 @@ exports.getTopProductsForUser = function(userEmail) {
 
 exports.addItemToShoppingList = function(userEmail, data) {
     console.log(data);
+    console.log(userEmail);
     return admin.database().ref('lists/' + userEmail + '/shopping-list/' + data.clean_nm).set({
         addedByUser: userEmail,
         count: 1,

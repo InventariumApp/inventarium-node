@@ -98,14 +98,16 @@ function parseResponseAndKickoffAction(response, phoneNumber) {
     var cleanPhoneNumber = phoneNumber.replace(/\+/g, "");
     console.log("SMS from: ", cleanPhoneNumber);
     firebase.getUserEmailForUserPhoneNumber(cleanPhoneNumber).then(function(userEmail) {
-        // if no email returned, check if this is a ohone number of a shared user
+        // if no email returned, check if this is a phone number of a shared user
         if(userEmail === null) {
             firebase.getUserEmailForSharedUser(cleanPhoneNumber).then(function(email) {
                 if(email !== null) {
                     console.log(cleanPhoneNumber, " is a shared user.");
                     // user is a shared user
                     sendTwilioApiaiResponse(cleanPhoneNumber, responseSpeech);
-                    doAction(action, responseItem, userEmail, cleanPhoneNumber);
+                    setTimeout(function(){
+                        doAction(action, responseItem, email, cleanPhoneNumber);
+                    }, 1000);
                 }
                 else {
                     sendTwilioNoListResponse(cleanPhoneNumber);
