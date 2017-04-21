@@ -109,13 +109,16 @@ app.get('/graphs/top_products/:user', function(req, res) {
         var count = 0;
 
         for(i in results) {
-            console.log(results[i]);
-            chartLabels.push(results[i][0]);
-            chartData.push(results[i][1]);
+            if(count < 6) {
+                console.log(results[i]);
+                chartLabels.push(results[i][0]);
+                chartData.push(results[i][1]);
+            }
+            count++;
         }
         console.log('\n\n');
         console.log(chartLabels);
-        res.render('topProdcutsPage', {chartData: JSON.stringify(chartData),
+        res.render('topProductsPage', {chartData: JSON.stringify(chartData),
                              chartLabels: JSON.stringify(chartLabels)}
         );
     });
@@ -127,7 +130,6 @@ app.get('/graphs/top_categories/:user', function(req, res) {
     firebase.getItemCategoryCounts(userEmail).then(function(results) {
         var chartData = [];
         var chartLabels = [];
-        var count = 0;
 
         for(var key in results) {
             chartLabels.push(key);
@@ -153,7 +155,7 @@ app.get('/graphs/', function(req, res) {
         }
         console.log('\n\n');
         console.log(chartLabels);
-        res.render('index', {chartData: JSON.stringify(chartData),
+        res.render('topProductsPage', {chartData: JSON.stringify(chartData),
             chartLabels: JSON.stringify(chartLabels)}
         );
     });

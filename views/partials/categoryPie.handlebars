@@ -5,8 +5,8 @@ var context = $('#chart1');
         type: 'pie',
         data: {
             labels: {{{chartLabels}}},
+            label: 'Top Product Categories',
             datasets: [{
-                label: 'Top Product Categories',
                 data: {{chartData}},
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
@@ -30,6 +30,9 @@ var context = $('#chart1');
         options: {
             title: {
                 fontSize: 40
+            },
+            layout: {
+                padding: 20
             },
             responsive: true,
             maintainAspectRatio: true
