@@ -115,8 +115,26 @@ app.get('/graphs/top_products/:user', function(req, res) {
         }
         console.log('\n\n');
         console.log(chartLabels);
-        res.render('index', {chartData: JSON.stringify(chartData),
+        res.render('topProdcutsPage', {chartData: JSON.stringify(chartData),
                              chartLabels: JSON.stringify(chartLabels)}
+        );
+    });
+});
+
+app.get('/graphs/top_categories/:user', function(req, res) {
+    console.log("Request to Categories Pie Chart");
+    const userEmail = decodeURIComponent(req.params.user);
+    firebase.getItemCategoryCounts(userEmail).then(function(results) {
+        var chartData = [];
+        var chartLabels = [];
+        var count = 0;
+
+        for(var key in results) {
+            chartLabels.push(key);
+            chartData.push(results[key]);
+        }
+        res.render('categoryPiePage', {chartData: JSON.stringify(chartData),
+            chartLabels: JSON.stringify(chartLabels)}
         );
     });
 });
