@@ -11,7 +11,6 @@ exports.sendSms = function (to, message) {
             console.error('Could not send message.');
             console.error(err);
         } else {
-            console.log('Administrator notified');
         }
     });
 };

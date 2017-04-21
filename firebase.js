@@ -1,5 +1,6 @@
 var admin = require("firebase-admin");
 var serviceAccount = require("./Firebase_server_key.json");
+var twilioClient = require('./twilioClient.js');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -28,7 +29,9 @@ exports.getPantryListForUser = function(userEmail) {
     return data;
 }
 
-exports.shareShoppingList = function(userEmail, phoneNumber, callback) {
+exports.shareShoppingList = function(userEmail, phoneNumber) {
+    var firstTimeUserString = "Hi there! I'm Inventariam bot. Michael has shared a shopping and pantry list with you. " +
+        "Feel free to add, remove, or see any items on the lists. Just let me know!";
     admin.database().ref('lists/' + userEmail).once('value').then(function(snapshot) {
         var shoppingList = snapshot.val()['shopping-list'];
         var shoppingListString = '';
@@ -37,18 +40,21 @@ exports.shareShoppingList = function(userEmail, phoneNumber, callback) {
             shoppingListString = shoppingListString.concat(item);
             shoppingListString = shoppingListString.concat(", ");
         }
-        shoppingListString = shoppingListString.substring(0, shoppingListString.length - 2);
+        shoppingListString = shoppingListString.substring(0, shoppingListString.length - 2).toLowerCase();
         console.log("Shopping list string: ", shoppingListString);
         console.log(phoneNumber);
-        callback(phoneNumber, shoppingListString);
+        twilioClient.sendSms(phoneNumber, firstTimeUserString);
+        setTimeout(function(){
+            twilioClient.sendSms(phoneNumber, shoppingListString);
+        }, 1000);
     });
 }
 
 exports.shareWithPhoneNumber = function(userEmail, phoneNumber) {
+    console.log("Inside share with phone number");
     admin.database().ref('share-links/' + phoneNumber).set({
         "access-to": userEmail
     });
-    // TODO: send them an sms
 }
 
 exports.getTopProductsForUser = function(userEmail) {
